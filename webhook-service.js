@@ -22,7 +22,18 @@ app.post('/webhook', (req, res) => {
       console.error(`Stderr: ${stderr}`);
     }
     console.log(`Stdout: ${stdout}`);
-    res.status(200).send('Git pull success');
+    // Setelah pull, jalankan service.sh
+    exec('sh ./service.sh', (err, so, se) => {
+      if (err) {
+        console.error(`service.sh error: ${err.message}`);
+        return res.status(500).send('service.sh failed');
+      }
+      if (se) {
+        console.error(`service.sh stderr: ${se}`);
+      }
+      console.log(`service.sh stdout: ${so}`);
+      res.status(200).send('Git pull and service.sh success');
+    });
   });
 });
 
