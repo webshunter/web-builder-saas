@@ -3,8 +3,9 @@
 # Script ini akan dijalankan setelah git pull oleh webhook-service
 
 echo "Menjalankan post-pull script..."
-# Tambahkan perintah yang ingin dijalankan setelah pull di bawah ini
-# Contoh: npm install && npm run build
+
+echo "Menjalankan git pull..."
+git pull
 npm install --force
 
 	# Fungsi untuk cek dan jalankan service jika belum berjalan

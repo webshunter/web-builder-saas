@@ -10,30 +10,17 @@ app.use(bodyParser.json());
 
 // Endpoint webhook
 app.post('/webhook', (req, res) => {
-  // (Opsional) Verifikasi secret dari GitHub di sini
-
-  // Jalankan git pull di root project (current working directory)
-  exec('git pull', (error, stdout, stderr) => {
-    if (error) {
-      console.error(`Error: ${error.message}`);
-      return res.status(500).send('Git pull failed');
+  // Jalankan service.sh saja, semua proses update dilakukan di dalamnya
+  exec('sh ./service.sh', (err, so, se) => {
+    if (err) {
+      console.error(`service.sh error: ${err.message}`);
+      return res.status(500).send('service.sh failed');
     }
-    if (stderr) {
-      console.error(`Stderr: ${stderr}`);
+    if (se) {
+      console.error(`service.sh stderr: ${se}`);
     }
-    console.log(`Stdout: ${stdout}`);
-    // Setelah pull, jalankan service.sh
-    exec('sh ./service.sh', (err, so, se) => {
-      if (err) {
-        console.error(`service.sh error: ${err.message}`);
-        return res.status(500).send('service.sh failed');
-      }
-      if (se) {
-        console.error(`service.sh stderr: ${se}`);
-      }
-      console.log(`service.sh stdout: ${so}`);
-      res.status(200).send('Git pull and service.sh success');
-    });
+    console.log(`service.sh stdout: ${so}`);
+    res.status(200).send('service.sh success');
   });
 });
 
