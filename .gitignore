@@ -7,3 +7,9 @@ build/
 .DS_Store
 coverage/
 .git/
+# Ignore lock file, but keep package.json tracked
+package-lock.json
+yarn.lock
+# Uncomment below if you want to ignore all json except package.json
+#*.json
+# !package.json
