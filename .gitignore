@@ -15,3 +15,6 @@ yarn.lock
 # Uncomment below if you want to ignore all json except package.json
 #*.json
 # !package.json
+
+# Ignore React build output
+express-ui/public/react/

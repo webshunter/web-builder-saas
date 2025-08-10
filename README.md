@@ -1,45 +1,71 @@
-# Webhook Service for Auto Git Pull
 
-Service ini menggunakan Express.js untuk menerima webhook dari GitHub dan otomatis menjalankan `git pull` pada root project setiap ada push ke repository.
+# Web Builder SaaS - Monorepo
 
-## Fitur
-- Endpoint webhook: `/webhook` (POST)
-- Menjalankan `git pull` secara otomatis saat webhook diterima
-- Mudah diintegrasikan dengan GitHub Webhook
+> Platform SaaS landing page builder modern, siap auto-deploy, dengan integrasi React, Express, Tailwind, dan auto-pull GitHub webhook.
 
-## Cara Penggunaan
+---
 
-1. **Install dependencies**
-   ```bash
-   npm install
-   ```
+## 🚀 Struktur Proyek
 
-2. **Jalankan service**
-   ```bash
-   npm start
-   ```
-   Secara default berjalan di port 3001.
+```
+├── webhook-service.js      # Service Express auto-pull dari GitHub
+├── service.sh              # Script shell orchestrasi build & deploy
+├── apigetway.js, landing.js# (Opsional) Service lain
+├── express-ui/             # Folder utama web app (Express + React)
+│   ├── index.js            # Entry point Express
+│   ├── package.json        # Script build/dev/serve
+│   ├── postbuild.js        # Copy hasil build React
+│   ├── public/             # Asset statis & hasil build React
+│   ├── react-app/          # Source code React (frontend)
+│   │   ├── src/components/ # Komponen modular UI
+│   │   ├── src/pages/      # Halaman per menu
+│   │   ├── src/Router.js   # SPA router hash-based
+│   │   └── ...             # File React lain
+│   ├── tailwind.config.js  # Tailwind config
+│   └── views/              # EJS template (jika SSR)
+└── ...
+```
 
-3. **Setup Webhook di GitHub**
-   - Buka repository Anda di GitHub
-   - Masuk ke Settings > Webhooks > Add webhook
-   - Isi URL dengan: `http://<server-anda>:3001/webhook`
-   - Pilih event: "Just the push event"
-   - Simpan webhook
+---
 
-4. **Testing**
-   - Lakukan push ke repository GitHub
-   - Service akan otomatis menjalankan `git pull` di root project
+## 🛠️ Pengembangan
 
-## Catatan
-- Pastikan service ini dijalankan di direktori root project git Anda.
-- Untuk keamanan, tambahkan verifikasi secret pada webhook (lihat komentar di kode).
-- Jangan lupa menyesuaikan port jika diperlukan.
+### 1. Development
+- Jalankan `npm run dev` di `express-ui/` untuk parallel Express & React dev server.
+- Edit komponen di `react-app/src/components/` dan halaman di `react-app/src/pages/`.
 
-## Struktur File
-- `webhook-service.js` : Source code utama service webhook
-- `package.json` : Konfigurasi npm dan dependencies
-- `.gitignore` : File/folder yang diabaikan oleh git
+### 2. Build Production
+- Jalankan `npm run fullbuild` di `express-ui/`:
+   - Build React (`react-app/build`)
+   - Copy hasil build ke `express-ui/public/react`
+   - Build Tailwind CSS ke `public/styles/output.css`
+- Express akan serve hasil build React dan asset statis.
+
+### 3. Auto Deploy
+- Push ke GitHub → webhook-service menerima event → jalankan `service.sh` untuk pull, build, dan restart service.
+
+---
+
+## 📚 Struktur Folder Penting
+
+- `express-ui/react-app/src/components/` : Komponen UI (Navbar, Hero, dsb)
+- `express-ui/react-app/src/pages/`      : Halaman per menu (Features, Pricing, Template, Contact)
+- `express-ui/react-app/src/Router.js`   : SPA router hash-based
+- `express-ui/public/`                   : Asset statis & hasil build React
+- `service.sh`                           : Script auto build & restart
+- `webhook-service.js`                   : Service webhook auto-pull
+
+---
+
+## 💡 Saran Pengembangan Berikutnya
+
+- Tambah halaman baru: buat file di `src/pages/` dan update menu di `Navbar.js`
+- Tambah API: buat endpoint di `express-ui/index.js`
+- Tambah unit test: di `src/App.test.js` atau folder `__tests__`
+- Integrasi CI/CD: GitHub Actions untuk test & build otomatis
+- Keamanan: verifikasi secret webhook, validasi input user
+- Optimasi: lazy load, code splitting, optimasi asset React
+- Dokumentasi: update README.md setiap ada fitur/struktur baru
 
 ---
 
