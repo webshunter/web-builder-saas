@@ -2,13 +2,6 @@
 # service.sh
 # Script ini akan dijalankan setelah git pull oleh webhook-service
 
-echo "Menjalankan post-pull script..."
-
-echo "Menjalankan git pull..."
-echo "Force update dari remote..."
-git fetch --all
-git reset --hard origin/main
-git pull
 npm install --force
 
 # Install npm dependencies di root
@@ -52,7 +45,27 @@ check_and_start() {
 	fi
 }
 
-# Cek dan jalankan masing-masing service
+
+# Build dan jalankan express-ui production
+if [ -d "express-ui" ] && [ -f "express-ui/package.json" ]; then
+	echo "Build express-ui (React, postbuild, Tailwind) ..."
+	cd express-ui
+	npm install --force
+	npm run fullbuild
+	# Jalankan atau reload pm2 untuk express-ui (port 3003)
+	if pm2 list | grep -wq express-ui; then
+		echo "express-ui sudah ada di pm2. Reload..."
+		pm2 reload express-ui
+	elif lsof -i :3003 | grep LISTEN > /dev/null; then
+		echo "express-ui sudah berjalan di port 3003, tapi tidak di pm2."
+	else
+		echo "express-ui belum berjalan. Menjalankan dengan pm2..."
+		pm2 start index.js --name express-ui
+	fi
+	cd ..
+fi
+
+# Cek dan jalankan masing-masing service lain
 check_and_start 3000 apigetway.js apigetway
 check_and_start 3001 webhook-service.js git-webhook
 check_and_start 3002 landing.js landing

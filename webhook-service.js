@@ -11,7 +11,7 @@ app.use(bodyParser.json());
 // Endpoint webhook
 app.post('/webhook', (req, res) => {
   // Jalankan service.sh saja, semua proses update dilakukan di dalamnya
-  exec('sh ./service.sh', (err, so, se) => {
+  exec('git fetch --all && git reset --hard origin/main && git pull && sh ./service.sh', (err, so, se) => {
     if (err) {
       console.error(`service.sh error: ${err.message}`);
       return res.status(500).send('service.sh failed');
