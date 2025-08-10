@@ -17,8 +17,11 @@ check_and_start() {
 	PORT=$1
 	SCRIPT=$2
 	NAME=$3
-	if lsof -i :$PORT | grep LISTEN > /dev/null; then
-		echo "$NAME sudah berjalan di port $PORT."
+	if pm2 list | grep -wq $NAME; then
+		echo "$NAME sudah ada di pm2. Reload..."
+		pm2 reload $NAME
+	elif lsof -i :$PORT | grep LISTEN > /dev/null; then
+		echo "$NAME sudah berjalan di port $PORT, tapi tidak di pm2."
 	else
 		echo "$NAME belum berjalan. Menjalankan dengan pm2..."
 		pm2 start $SCRIPT --name $NAME
