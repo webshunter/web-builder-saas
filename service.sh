@@ -5,7 +5,11 @@
 echo "Menjalankan post-pull script..."
 
 echo "Menjalankan git pull..."
+echo "Force update dari remote..."
+git fetch --all
+git reset --hard origin/main
 git pull
+
 npm install --force
 
 	# Fungsi untuk cek dan jalankan service jika belum berjalan
